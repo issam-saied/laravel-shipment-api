@@ -84,6 +84,8 @@ class ShipmentOptionsTest extends TestCase
 
         $data = $response->json('data');
 
+        $this->assertNotEmpty($data);
+
         foreach ($data as $option) {
             $this->assertTrue($option['weekends']);
         }
@@ -109,6 +111,8 @@ class ShipmentOptionsTest extends TestCase
         $response->assertOk();
 
         $data = $response->json('data');
+
+        $this->assertNotEmpty($data);
 
         foreach ($data as $option) {
             $this->assertTrue($option['weekends']);
