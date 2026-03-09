@@ -4,7 +4,7 @@ This project is a Laravel-based API that calculates available shipment options b
 
 The project was built as a personal exercise to experiment with API design, domain modeling, and backend architecture using Laravel.
 
-It focuses on clean code structure, validation, service layer logic, and containerized development.
+It focuses on clean code structure, validation, service layer logic, containerized development, and automated testing.
 
 ---
 
@@ -17,7 +17,7 @@ It focuses on clean code structure, validation, service layer logic, and contain
 - Service layer for business logic separation
 - Eloquent models for domain entities
 - Docker-based development environment
-- Automated tests
+- Automated Feature and Unit tests
 
 ---
 
@@ -36,6 +36,34 @@ Based on these inputs, the system determines:
 - The correct shipping price
 
 The API returns all available shipment options matching the request.
+
+---
+
+## Business Rules
+
+The API applies a simplified set of shipment rules based on:
+
+- carrier
+- package type
+- destination region
+- shipment date
+- weekend availability
+
+Countries are mapped to shipping regions:
+
+- **NL** – Netherlands
+- **BE** – Belgium
+- **EU** – Europe
+- **ROW** – Rest of World
+
+Key logic implemented in the system:
+
+- Not every carrier supports every package type
+- Not every carrier ships to every region
+- Some shipment options are available on weekends
+- Prices differ per carrier, package type, and destination region
+
+The service layer evaluates these rules and returns the valid shipment options for the requested input parameters.
 
 ---
 
@@ -84,19 +112,19 @@ docker compose up -d --build
 Install dependencies:
 
 ```
-docker compose exec app composer install
+docker compose exec php composer install
 ```
 
 Generate application key:
 
 ```
-docker compose exec app php artisan key:generate
+docker compose exec php php artisan key:generate
 ```
 
 Run database migrations:
 
 ```
-docker compose exec app php artisan migrate
+docker compose exec php php artisan migrate
 ```
 
 ---
@@ -111,27 +139,42 @@ Example query parameters:
 
 ```
 country=NL
-package_type=standard
-shipment_date=2024-01-10
+package_type=Standard
+shipment_date=2026-03-25
 ```
 
 ---
 
 ## Testing
 
-Run the test suite:
+Run the full test suite:
 
 ```
-docker compose exec app php artisan test
+docker compose exec php php artisan test
 ```
 
-Tests include:
+Run only feature tests:
 
-- Feature tests for API endpoints
-- Unit tests for shipment option logic
+```
+docker compose exec php php artisan test tests/Feature
+```
+
+Run only unit tests:
+
+```
+docker compose exec php php artisan test tests/Unit
+```
+
+The project includes automated tests for:
+
+- API endpoint behavior
+- Request validation
+- Shipment availability rules
+- Pricing logic
+- Service layer business logic
 
 ---
 
 ## Purpose
 
-This repository is shared as an example project to demonstrate Laravel backend development, API design, and application architecture.
+This repository is shared as an example project to demonstrate Laravel backend development, API design, business rule implementation, containerized development, and automated testing.
